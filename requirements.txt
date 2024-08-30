@@ -17,4 +17,4 @@ pypdf2
 openpyxl
 unstructured
 networkx
-python-magic
+
