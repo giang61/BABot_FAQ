@@ -1,4 +1,3 @@
-
 python-dotenv
 langchain
 langchain-community
@@ -15,6 +14,3 @@ pathlib
 pymysql
 pypdf2
 openpyxl
-unstructured
-networkx
-
