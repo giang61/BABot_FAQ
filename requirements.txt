@@ -14,3 +14,5 @@ pathlib
 pymysql
 pypdf2
 openpyxl
+SQLAlchemy
+psycopg2

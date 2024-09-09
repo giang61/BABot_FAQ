@@ -41,7 +41,7 @@ print("Data from dafacd:")
 print(df)
 
 # Create an in-memory SQLite database and write the DataFrame to it
-sqlite_engine = create_engine(r'sqlite:///C:/Users/bob/PycharmProjects/QA Tool/sqlitedb/temp.db', echo=False)
+sqlite_engine = create_engine(r'sqlite:///C:/Users/bob/PycharmProjects/BABot/sqlitedb/temp.db', echo=False)
 df.to_sql('Appro', sqlite_engine, index=False, if_exists='replace')
 
 # 3. Create a 2nd table with the names of the Group suppliers
@@ -65,25 +65,26 @@ INNER JOIN Groupe
 ON Appro.ltie LIKE Groupe.lvniv1 || '%';
 """
 
-"""
-#This is to combine the whole thing into one sql commande block
-SELECT t1.ltie, t1.qterec1, t1.daterec
-FROM dafacd t1
-INNER JOIN dhierfou t2
-ON t1.ltie LIKE t2.lvniv1 || '%'
-WHERE t1.cetab = '13'
-AND t1.daterec >= '2024-01-02'
-AND t1.daterec <= '2024-06-30'
-AND t2.ltypehier = 'GROUPE INDUSTRIEL/PRODUCTEURS';
-"""
-
 # Execute the query and store the result in a DataFrame using the SQLite engine
 df = pd.read_sql_query(select_query, sqlite_engine)
-print("Filtered Appro data based on Group suppliers:")
+print("Appro data filtered by Group suppliers:")
 print(df)
-df.to_sql('ApproGroupe', sqlite_engine, index=False, if_exists='replace')
+df.to_sql('InnerJoin', sqlite_engine, index=False, if_exists='replace')
 
+# 4. Create a 4th table with the InnerJoin table filtered by Group suppliers
+select_query = """
+SELECT cetab, SUBSTR(ltie, 1, 7) AS ltie_prefix, SUM(qterec1) AS total_weight
+FROM InnerJoin
+GROUP BY cetab, ltie_prefix
+ORDER BY total_weight DESC;
+"""
+# Execute the query and store the result in a DataFrame using the SQLite engine
+df = pd.read_sql_query(select_query, sqlite_engine)
+print("Appro data consolidated by Suppliers groups:")
+print(df)
+df.to_sql('ApproGroup', sqlite_engine, index=False, if_exists='replace')
 
+"""
 db = SQLDatabase(sqlite_engine)
 llm = OpenAI(verbose = True, api_key=OPENAI_API_KEY)
 
@@ -96,3 +97,4 @@ def database_response(query_text, llm = llm, db=db):
 
 database_response("Quels sont les 5 fournisseurs avec le plus de poids en mars 2024?")
 #database_response("Montrer les poids mensuels par fournisseur en 6 colonnes, de janvier à juin")
+"""
