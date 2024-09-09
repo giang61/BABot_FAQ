@@ -12,7 +12,7 @@ from pinecone import ServerlessSpec
 from langchain_openai import OpenAIEmbeddings
 
 # Load environment variables from .env file
-load_dotenv(find_dotenv('.env_EricH'))
+load_dotenv(find_dotenv('.env'))
 
 # Get necessary API keys and configurations
 PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
