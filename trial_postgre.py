@@ -1,10 +1,7 @@
-from langchain_community.llms import OpenAI
-from langchain.utilities import SQLDatabase
-from langchain_experimental.sql import SQLDatabaseChain
 import os
-import openai
-from dotenv import load_dotenv, find_dotenv
+
 import pandas as pd
+from dotenv import load_dotenv, find_dotenv
 from sqlalchemy import create_engine
 
 # Load environment variables from .env file
@@ -32,7 +29,7 @@ select_query = """
 SELECT cetab, ltie, qterec1, daterec
 FROM dafacd
 WHERE daterec >= '2024-01-02' 
-AND daterec <= '2024-06-30';
+AND daterec <= '2024-08-31';
 """
 
 # Execute the query and store the result in a DataFrame
