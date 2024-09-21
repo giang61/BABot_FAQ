@@ -22,6 +22,9 @@ if not all([PINECONE_API_KEY, PINECONE_ENV, OPENAI_API_KEY]):
 
 os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
 
+# Streamlit page configuration
+st.set_page_config(page_title="BABot_FAQ", page_icon="🎙️", layout="wide")
+
 # Constants
 CONVERSATION_FILE_PATH = "conversation_history.txt"
 
@@ -60,7 +63,7 @@ def save_conversation_history(user_input, bot_response):
 def main():
     """Main function to run the Streamlit app."""
     st.title("BABot_FAQ")
-    st.write("### Que sais-je sur TICADI?")
+    st.write("### Que voulez-vous savoir sur TICADI?")
     # Initialize session state
     if 'conversation_history' not in st.session_state:
         st.session_state.conversation_history = load_conversation_history()
