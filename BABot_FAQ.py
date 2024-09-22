@@ -7,7 +7,7 @@ from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
 
 # Load environment variables
-load_dotenv(find_dotenv())
+load_dotenv(find_dotenv('.env'))
 PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
 PINECONE_ENV = os.getenv('PINECONE_ENV')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -63,7 +63,7 @@ def save_conversation_history(user_input, bot_response):
 def main():
     """Main function to run the Streamlit app."""
     st.title("BABot_FAQ")
-    st.write("### Que voulez-vous savoir sur TICADI?")
+    st.write(f"### Que voulez-vous savoir sur (les documents dans) {NAMESPACE} ?")
     # Initialize session state
     if 'conversation_history' not in st.session_state:
         st.session_state.conversation_history = load_conversation_history()
