@@ -53,7 +53,7 @@ st.set_page_config(page_title="BABot_FAQ", page_icon=":white_check_mark:", layou
 CONVERSATION_FILE_PATH = "conversation_history.txt"
 
 # Initialize models
-llm = ChatOpenAI(model_name='gpt-4', temperature=0.5, max_tokens=1024)
+llm = ChatOpenAI(model_name='gpt-4o', temperature=0.5, max_tokens=1024)
 embeddings = OpenAIEmbeddings(model='text-embedding-3-small', dimensions=1536)
 doc_db = pcvs.from_documents('', embeddings, index_name=INDEX_NAME, namespace=NAMESPACE)
 
