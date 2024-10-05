@@ -31,11 +31,16 @@ spec = ServerlessSpec(cloud=cloud, region=region)
 # Function to clear namespace if it exists
 def clear_namespace_if_exists(pinecone_client, index_name, namespace):
     try:
-        if index_name in pinecone_client.list_indexes():
+        # Get the list of index names
+        index_names = [index['name'] for index in pinecone_client.list_indexes()]
+        print(index_names)
+        # Check if the index exists in Pinecone
+        if index_name in index_names:
             pinecone_client.Index(index_name).delete(delete_all=True, namespace=namespace)
             print(f"Namespace '{namespace}' cleared.")
         else:
             print(f"Namespace '{namespace}' does not exist yet.")
+
     except Exception as e:
         print(f"Error while clearing namespace '{namespace}': {e}")
 
@@ -44,13 +49,20 @@ if index_name not in pc.list_indexes().names():
     pc.create_index(index_name, dimension=1536, metric='cosine', spec=spec)
 
 # Clear the namespace if it exists
-clear_namespace_if_exists(pc, index_name, namespace)
+# clear_namespace_if_exists(pc, index_name, namespace)
 
 # Streamlit page configuration
 st.set_page_config(page_title="BABot_FAQ", page_icon=":white_check_mark:", layout="wide")
 
 # Constants
 CONVERSATION_FILE_PATH = "conversation_history.txt"
+
+def reset_conversation_history():
+    """Reinitialize conversation file to a new empty file."""
+    # Create and initialize an empty new file
+    with open(CONVERSATION_FILE_PATH, "w") as file:
+        file.write("")  # Empty content
+    st.success(f"L'historique des interrogations re initialisé")
 
 # Initialize models
 llm = ChatOpenAI(model_name='gpt-4o', temperature=0.5, max_tokens=1024)
@@ -161,9 +173,17 @@ def main():
 
         if uploaded_files:
             with st.spinner('BABot est en train de travailler sur vos documents ...'):
+                # Clear the conversation history
+                reset_conversation_history()
+
+                # Clear the namespace if it exists
+                clear_namespace_if_exists(pc, index_name, namespace)
+
                 load_split_files(uploaded_files)
                 st.success("L'ensemble de documents bien pris en charge par BABot. Cliquez sur le bouton NON en haut pour démarrer l'analyse.")
+
         return  # Stop further execution until document is uploaded
+
 
     # Proceed with the chatbot for querying the existing document
     st.info("Historique des interrogations:")
