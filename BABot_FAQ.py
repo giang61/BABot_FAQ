@@ -92,11 +92,10 @@ def chatbot_response(input_text):
 
 # Load and save conversation history functions
 def load_conversation_history():
-    try:
+    if os.path.exists(CONVERSATION_FILE_PATH) and os.path.getsize(CONVERSATION_FILE_PATH) > 0:
         with open(CONVERSATION_FILE_PATH, "r") as file:
             return file.readlines()
-    except FileNotFoundError:
-        return []
+    return None  # Return None if the file is empty or doesn't exist
 
 def save_conversation_history(user_input, bot_response):
     with open(CONVERSATION_FILE_PATH, "a") as file:
@@ -110,8 +109,7 @@ def reset_conversation_history():
         file.write("")  # Empty content
     st.success(f"L'historique des interrogations re initialisé")
 
-# PDF conversion function (cached)
-@st.cache_resource
+# PDF conversion function
 def convert_txt_to_pdf(txt_file_path, pdf_file_path):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
@@ -178,9 +176,17 @@ def main():
     # Proceed with the chatbot for querying the existing document
     st.info("Historique des interrogations:")
 
-    # Initialize session state for conversation history
-    if 'conversation_history' not in st.session_state:
-        st.session_state.conversation_history = load_conversation_history()
+    # Logic to initialize or load conversation history
+    conversation_history = load_conversation_history()
+
+    if conversation_history is None:
+        # File is empty or doesn't exist, reinitialize the session state variables
+        st.session_state.conversation_history = []
+        st.session_state.uploaded_file_content = ""
+    else:
+        # File has content, load the file data into the session state
+        st.session_state.conversation_history = conversation_history
+
     # Display conversation history
     for item in st.session_state.conversation_history:
         item_display = item.replace(":newligne:", "\n")
