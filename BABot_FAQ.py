@@ -30,7 +30,7 @@ def load_env_vars():
 # Cache OpenAI embeddings initialization
 @st.cache_resource
 def init_openai_embeddings(api_key):
-    return OpenAIEmbeddings(model='text-embedding-3-small', dimensions=1536)
+    return OpenAIEmbeddings(model='text-embedding-3-small')
 
 # Cache LLM initialization
 @st.cache_resource
@@ -82,7 +82,7 @@ def retrieval_answer(query):
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type='stuff',
-        retriever=doc_db.as_retriever(),
+        retriever=doc_db.as_retriever(search_kwargs={"k": 5}), # Fetch top 5 results
     )
     return qa.run(query)
 
